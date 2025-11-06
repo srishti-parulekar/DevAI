@@ -11,6 +11,7 @@ import StageInfo from "./StageInfo";
 import DevelopmentPagesList from "./DevelopmentPagesList";
 import ColorPickerInput from "./ColorPickerInput";
 import SketchCanvas from "./SketchCanvas";
+import PreviewImages from "./PreviewImages";
 
 let socket;
 
@@ -26,6 +27,8 @@ const Chat = () => {
 
   const location = useLocation();
   const initialMessage = location.state?.initialMessage;
+  const [showPreviewImages, setShowPreviewImages] = useState(false);
+  const [images, setImages] = useState([]);
 
   useEffect(() => {
     const initializeChat = async () => {
@@ -109,9 +112,15 @@ const Chat = () => {
         ...(extra_details?.ui_flags?.show_color_picker && {
           specialComponent: "colorPicker",
         }),
+        ...(extra_details?.ui_flags?.show_preview_images && {
+          specialComponent: "previewImages",
+        }),
       };
       if (extra_details?.stage_data?.pages) {
         dispatch(setPages(extra_details.stage_data.pages));
+      }
+      if (extra_details?.stage_data?.images) {
+        setImages(extra_details.stage_data.images);
       }
 
       setMessages((prev) => [...prev.filter((msg) => !msg.isLoading), newMessage]);
@@ -224,7 +233,7 @@ const Chat = () => {
               <DevelopmentPagesList
                 pages={pages || []}
                 onAddDesign={handleAddDesign}
-                onEditDetails={() => {}}
+                onEditDetails={() => { }}
               />
             )}
             {msg.text && (
@@ -243,8 +252,18 @@ const Chat = () => {
                 disabled={isLoading}
               />
             )}
+            {msg.specialComponent === "previewImages" && (
+              <button className="p-2 bg-blue-500 text-white rounded" onClick={() => setShowPreviewImages(true)}>Preview Images</button>
+            )}
           </div>
         ))}
+        {showPreviewImages && (
+          <PreviewImages
+            isOpen={showPreviewImages}
+            onClose={() => setShowPreviewImages(false)}
+            images={images}
+          />
+        )}
 
         <div ref={messagesEndRef} />
       </div>

@@ -14,6 +14,7 @@ from .ideation_agent import (
 )
 from .frontend_agent import (
     generate_frontend,
+    get_relevant_images,
     identify_website_pages,
     generate_frontend_prompts,
 )
@@ -240,6 +241,17 @@ class MasterAgent:
                 True,
                 "Design",
                 ui_flags={"show_color_picker": True},
+            )
+            images = get_relevant_images(self.project.product_description)
+            all_image_urls = []
+            for tag, urls in images.items():
+                all_image_urls.extend(urls)
+            await ChatUtil.send_message(
+                self.chat,
+                f"These are the Images that will be used for creating the Website",
+                True,
+                "Design",
+                ui_flags={"show_preview_images": True},stage_data={"images": all_image_urls},
             )
             return
         if request.get("intent") == "approve":
