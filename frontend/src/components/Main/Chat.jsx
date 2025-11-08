@@ -86,7 +86,7 @@ const Chat = () => {
   // 👇 Establish websocket connection
   const setupWebSocket = (chatId) => {
     const token = localStorage.getItem("access");
-    const wsUrl = `ws://127.0.0.1:8000/ws/chat/${chatId}/?token=${token}`;
+    const wsUrl = `ws://p8hmskp4-8000.inc1.devtunnels.ms/ws/chat/${chatId}/?token=${token}`;
     socket = new WebSocket(wsUrl);
 
     socket.onopen = () => {
