@@ -11,38 +11,44 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
-        
+
       - name: Install Node
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
-          
+
       - name: Install Dependencies
         run: cd frontend && npm install
-        
+
       - name: Build Project
-        run: cd frontend && npm run build
-        
+        env:
+          VITE_API_URL: "https://p8hmskp4-8000.inc1.devtunnels.ms/"
+        run: |
+          cd frontend
+          echo "VITE_API_URL=$VITE_API_URL" > .env
+          npm run build
+
       - name: Upload artifact to enable deployment
         uses: actions/upload-artifact@v4
         with:
           name: production-files
           path: ./frontend/dist
-          
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
+
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
           name: production-files
           path: ./frontend/dist
-          
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
